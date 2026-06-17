@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ── PRIMARY SEO ── -->
+  <title>Sushi Calculator | คำนวณราคาซูชิ Sushiro & Katsu Midori รวม SC แล้ว</title>
+  <meta name="description" content="คำนวณราคาซูชิแบบง่าย รองรับ Sushiro และ Katsu Midori คิด Service Charge 10% ให้อัตโนมัติ รู้ยอดรวมก่อนจ่ายจริง ใช้ฟรี ไม่ต้องดาวน์โหลด" />
+  <meta name="keywords" content="คำนวณราคาซูชิ, sushi calculator, sushiro ราคา, katsu midori ราคา, คิด SC ซูชิ, service charge ซูชิ, ราคาจานซูชิ, sushiro SC 10%, คำนวณบิลซูชิ" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Sushi Calculator" />
+  <link rel="canonical" href="https://sushicalculator.vercel.app/" />
+
+  <!-- ── OPEN GRAPH (Facebook / LINE / Discord) ── -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://sushicalculator.vercel.app/" />
+  <meta property="og:title"       content="Sushi Calculator 🍣 | คำนวณราคาซูชิ รวม SC แล้ว" />
+  <meta property="og:description" content="คิดราคาซูชิแต่ละจาน + SC 10% ได้เลย รองรับ Sushiro และ Katsu Midori ใช้ฟรีบนมือถือ" />
+  <meta property="og:locale"      content="th_TH" />
+  <meta property="og:site_name"   content="Sushi Calculator" />
+
+  <!-- ── TWITTER CARD ── -->
+  <meta name="twitter:card"        content="summary" />
+  <meta name="twitter:title"       content="Sushi Calculator 🍣 | คำนวณราคาซูชิ รวม SC" />
+  <meta name="twitter:description" content="คำนวณบิลซูชิ Sushiro & Katsu Midori รวม Service Charge 10% อัตโนมัติ" />
+
+  <!-- ── JSON-LD Structured Data (Google Rich Results) ── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Sushi Calculator",
+    "url": "https://sushicalculator.vercel.app/",
+    "description": "คำนวณราคาซูชิ Sushiro และ Katsu Midori รวม Service Charge 10% อัตโนมัติ",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "THB"
+    },
+    "inLanguage": "th",
+    "keywords": "sushi calculator, คำนวณราคาซูชิ, sushiro, katsu midori, SC 10%"
+  }
+  </script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f7f7f5;
+      --surface: #ffffff;
+      --surface2: #f2f2f0;
+      --border: rgba(0,0,0,0.12);
+      --border2: rgba(0,0,0,0.22);
+      --text: #1a1a1a;
+      --text2: #5a5a5a;
+      --text3: #999;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #141414;
+        --surface: #1e1e1e;
+        --surface2: #272727;
+        --border: rgba(255,255,255,0.10);
+        --border2: rgba(255,255,255,0.20);
+        --text: #f0f0f0;
+        --text2: #a0a0a0;
+        --text3: #666;
+      }
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans Thai', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 0;
+    }
+
+    .app { width: 100%; max-width: 560px; margin: 0 auto; transition: max-width 0.3s ease; }
+
+    /* ── SPLASH SCREEN ── */
+    #splash {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 3rem;
+    }
+
+    .splash-icon { font-size: 52px; margin-bottom: 1rem; line-height: 1; }
+
+    .splash-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .splash-sub {
+      font-size: 14px;
+      color: var(--text2);
+      margin-bottom: 2.5rem;
+    }
+
+    .splash-question {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 1rem;
+      letter-spacing: 0.01em;
+    }
+
+    .splash-cards {
+      display: flex;
+      gap: 14px;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .splash-card {
+      flex: 1;
+      border-radius: 18px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      padding: 24px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.18s ease;
+      font-family: inherit;
+    }
+    .splash-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+    }
+    .splash-card:active { transform: scale(0.98); }
+    .splash-card.sushiro-card:hover { border-color: #c0392b; }
+    .splash-card.katsu-card:hover   { border-color: #1e7d52; }
+
+    .splash-emoji { font-size: 36px; line-height: 1; }
+    .splash-store-name { font-size: 17px; font-weight: 700; color: var(--text); }
+    .splash-price-range {
+      font-size: 12px;
+      color: var(--text2);
+      background: var(--surface2);
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .splash-sc-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .badge-sc    { background: rgba(192,57,43,0.10); color: #c0392b; }
+    .badge-sc-g  { background: rgba(30,125,82,0.10); color: #1e7d52; }
+
+    .splash-plates {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .mini-plate {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0,0,0,0.15);
+    }
+
+    /* ── CALCULATOR SCREEN ── */
+    #calculator { display: none; }
+    .calc-body {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .calc-left, .calc-right {
+      width: 100%;
+    }
+
+    .calc-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+    .back-btn {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border2);
+      background: var(--surface);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; color: var(--text2);
+      transition: background 0.12s;
+      flex-shrink: 0;
+      font-family: inherit;
+    }
+    .back-btn:hover { background: var(--surface2); }
+    .calc-store-name { font-size: 17px; font-weight: 700; flex: 1; }
+    .calc-sc-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text2);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .plates-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .plate-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      transition: all 0.14s ease;
+      min-width: 72px;
+      position: relative;
+      user-select: none;
+    }
+    .plate-card:hover { border-color: var(--border2); background: var(--surface2); transform: translateY(-1px); }
+    .plate-card:active { transform: scale(0.97); }
+    .plate-card.selected { border-width: 2px; }
+
+    .plate-circle {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .plate-inner {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9.5px; font-weight: 600;
+    }
+    .plate-price { font-size: 13px; font-weight: 600; color: var(--text); }
+
+    .plate-badge {
+      position: absolute;
+      top: -7px; right: -7px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      border: 2px solid var(--surface);
+    }
+
+    /* Summary */
+    .summary-box {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .summary-head {
+      font-size: 12px; font-weight: 600;
+      color: var(--text2);
+      letter-spacing: 0.05em; text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .summary-rows { display: flex; flex-direction: column; gap: 7px; }
+    .summary-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 13px; color: var(--text2);
+    }
+    .summary-row .val { font-weight: 500; color: var(--text); }
+    .summary-row .plate-dot {
+      display: inline-block; width: 9px; height: 9px;
+      border-radius: 50%; vertical-align: -1px; margin-right: 6px;
+    }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+
+    .total-row { display: flex; justify-content: space-between; align-items: baseline; }
+    .total-label { font-size: 14px; font-weight: 600; color: var(--text); }
+    .total-amount { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; }
+
+    .sc-note { font-size: 11px; color: var(--text3); margin-top: 8px; text-align: right; }
+
+    .empty-state {
+      text-align: center; padding: 1.5rem 0;
+      font-size: 13px; color: var(--text3); line-height: 1.8;
+    }
+
+    .reset-btn {
+      width: 100%; padding: 11px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border2);
+      background: transparent; cursor: pointer;
+      font-size: 13px; color: var(--text2);
+      font-family: inherit;
+      transition: background 0.12s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .reset-btn:hover { background: var(--surface2); }
+
+    /* Confirm modal */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.38);
+      z-index: 100;
+      align-items: center; justify-content: center;
+      padding: 1rem;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-box {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 1.5rem 1.25rem 1.25rem;
+      width: 100%; max-width: 320px;
+      text-align: center;
+    }
+    .modal-icon { font-size: 28px; margin-bottom: 10px; }
+    .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+    .modal-sub   { font-size: 13px; color: var(--text2); margin-bottom: 1.25rem; }
+    .modal-btns  { display: flex; gap: 8px; }
+    .modal-cancel {
+      flex: 1; padding: 10px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border2);
+      background: transparent; cursor: pointer;
+      font-size: 14px; font-weight: 500; color: var(--text2);
+      font-family: inherit; transition: background 0.12s;
+    }
+    .modal-cancel:hover { background: var(--surface2); }
+    .modal-confirm {
+      flex: 1; padding: 10px;
+      border-radius: var(--radius-md);
+      border: none;
+      background: #e74c3c; cursor: pointer;
+      font-size: 14px; font-weight: 600; color: #fff;
+      font-family: inherit; transition: opacity 0.12s;
+    }
+    .modal-confirm:hover { opacity: 0.88; }
+
+    /* inline +/- qty controls in summary */
+    .qty-ctrl {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .qc-btn {
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 1px solid var(--border2);
+      background: var(--surface2); cursor: pointer;
+      font-size: 15px; color: var(--text);
+      display: flex; align-items: center; justify-content: center;
+      font-family: inherit; transition: background 0.1s; flex-shrink: 0;
+      line-height: 1;
+    }
+    .qc-btn:hover { background: var(--border); }
+    .qc-num { font-size: 13px; font-weight: 600; min-width: 18px; text-align: center; color: var(--text); }
+
+    /* ── MOBILE (≤ 480px) ── */
+    @media (max-width: 480px) {
+      body { padding: 0.75rem 0.5rem 3rem; }
+      .app { max-width: 100%; }
+
+      .splash-icon { font-size: 42px; }
+      .splash-title { font-size: 20px; }
+      .splash-sub { font-size: 12px; margin-bottom: 1.5rem; }
+      .splash-question { font-size: 13px; }
+      .splash-cards { gap: 10px; flex-direction: column; }
+      .splash-card { padding: 18px 12px 16px; flex-direction: row; gap: 12px; border-radius: 14px; }
+      .splash-emoji { font-size: 28px; }
+      .splash-store-name { font-size: 15px; }
+      .splash-price-range { font-size: 11px; }
+      .splash-plates { display: none; }
+
+      .calc-header { margin-bottom: 1rem; }
+      .calc-store-name { font-size: 15px; }
+      .section-label { font-size: 10px; margin-bottom: 8px; }
+
+      .plates-grid { gap: 6px; }
+      .plate-card { min-width: 60px; padding: 7px 8px; border-radius: 8px; }
+      .plate-circle { width: 34px; height: 34px; }
+      .plate-inner { width: 22px; height: 22px; font-size: 8.5px; }
+      .plate-price { font-size: 11px; }
+      .plate-badge { width: 18px; height: 18px; font-size: 10px; top: -6px; right: -6px; }
+
+      .summary-box { padding: 0.9rem 1rem; border-radius: 12px; }
+      .summary-head { font-size: 11px; margin-bottom: 10px; }
+      .summary-row { font-size: 12px; }
+      .total-amount { font-size: 24px; }
+
+      .reset-btn { font-size: 12px; padding: 9px; }
+
+      .qc-btn { width: 22px; height: 22px; font-size: 13px; }
+      .qc-num { font-size: 12px; }
+
+      .modal-box { padding: 1.25rem 1rem 1rem; }
+      .modal-title { font-size: 15px; }
+      .modal-sub { font-size: 12px; }
+    }
+
+    /* ── TABLET / iPad (481px – 1024px) ── */
+    @media (min-width: 481px) and (max-width: 1024px) {
+      body { padding: 2rem 2rem 4rem; }
+      .app { max-width: 680px; }
+
+      .splash-icon { font-size: 60px; margin-bottom: 1.25rem; }
+      .splash-title { font-size: 28px; }
+      .splash-sub { font-size: 15px; margin-bottom: 3rem; }
+      .splash-question { font-size: 16px; margin-bottom: 1.25rem; }
+      .splash-cards { gap: 16px; }
+      .splash-card { padding: 28px 20px 24px; border-radius: 20px; }
+      .splash-emoji { font-size: 40px; }
+      .splash-store-name { font-size: 19px; }
+      .splash-price-range { font-size: 13px; padding: 4px 12px; }
+      .mini-plate { width: 18px; height: 18px; }
+
+      .calc-header { margin-bottom: 1.75rem; }
+      .calc-store-name { font-size: 19px; }
+      .section-label { font-size: 12px; margin-bottom: 12px; }
+
+      .plates-grid { gap: 10px; }
+      .plate-card { min-width: 80px; padding: 12px 14px; border-radius: 12px; }
+      .plate-circle { width: 48px; height: 48px; }
+      .plate-inner { width: 30px; height: 30px; font-size: 10px; }
+      .plate-price { font-size: 14px; }
+
+      .summary-box { padding: 1.25rem 1.5rem; border-radius: 16px; }
+      .summary-head { font-size: 13px; margin-bottom: 16px; }
+      .summary-row { font-size: 14px; }
+      .total-amount { font-size: 32px; }
+
+      .reset-btn { padding: 13px; font-size: 14px; border-radius: 12px; }
+
+      .qc-btn { width: 28px; height: 28px; font-size: 16px; }
+      .qc-num { font-size: 14px; min-width: 22px; }
+
+      .modal-box { max-width: 380px; padding: 2rem 1.5rem 1.5rem; border-radius: 16px; }
+      .modal-icon { font-size: 34px; }
+      .modal-title { font-size: 18px; }
+      .modal-sub { font-size: 14px; }
+      .modal-cancel, .modal-confirm { padding: 12px; font-size: 15px; }
+    }
+
+    /* ── DESKTOP / PC (≥ 1025px) ── */
+    @media (min-width: 1025px) {
+      body { padding: 3rem 2rem 4rem; }
+      .app { max-width: 960px; }
+
+      #splash { padding-top: 5rem; }
+      .splash-icon { font-size: 68px; margin-bottom: 1.5rem; }
+      .splash-title { font-size: 32px; }
+      .splash-sub { font-size: 16px; margin-bottom: 3.5rem; }
+      .splash-question { font-size: 17px; margin-bottom: 1.5rem; }
+      .splash-cards { gap: 20px; max-width: 520px; margin: 0 auto; }
+      .splash-card {
+        padding: 32px 24px 28px;
+        border-radius: 22px;
+        transition: all 0.22s ease;
+      }
+      .splash-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 36px rgba(0,0,0,0.12);
+      }
+      .splash-emoji { font-size: 44px; }
+      .splash-store-name { font-size: 20px; }
+      .splash-price-range { font-size: 13px; padding: 4px 14px; }
+      .mini-plate { width: 20px; height: 20px; }
+
+      .calc-header { margin-bottom: 2rem; }
+      .calc-store-name { font-size: 22px; }
+      .calc-sc-tag { font-size: 12px; padding: 4px 12px; }
+      .back-btn { width: 38px; height: 38px; font-size: 16px; }
+
+      .calc-body {
+        flex-direction: row;
+        gap: 2rem;
+        align-items: flex-start;
+      }
+      .calc-left {
+        flex: 1;
+        min-width: 0;
+        position: sticky;
+        top: 2rem;
+      }
+      .calc-right {
+        width: 340px;
+        flex-shrink: 0;
+      }
+
+      .section-label { font-size: 12px; margin-bottom: 14px; }
+      .plates-grid { gap: 10px; margin-bottom: 0; }
+      .plate-card {
+        min-width: 85px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        transition: all 0.16s ease;
+      }
+      .plate-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      }
+      .plate-circle { width: 50px; height: 50px; }
+      .plate-inner { width: 32px; height: 32px; font-size: 10.5px; }
+      .plate-price { font-size: 14px; }
+      .plate-badge { width: 22px; height: 22px; font-size: 12px; }
+
+      .summary-box {
+        padding: 1.5rem;
+        border-radius: 16px;
+        margin-bottom: 1rem;
+      }
+      .summary-head { font-size: 13px; margin-bottom: 18px; }
+      .summary-row { font-size: 14px; }
+      .summary-rows { gap: 9px; }
+      .total-amount { font-size: 34px; }
+      .sc-note { font-size: 12px; }
+
+      .reset-btn { padding: 13px; font-size: 14px; border-radius: 12px; }
+
+      .qc-btn { width: 28px; height: 28px; font-size: 16px; }
+      .qc-num { font-size: 14px; min-width: 22px; }
+
+      .modal-box { max-width: 400px; padding: 2rem 1.75rem 1.5rem; border-radius: 18px; }
+      .modal-icon { font-size: 36px; }
+      .modal-title { font-size: 18px; }
+      .modal-sub { font-size: 14px; }
+      .modal-cancel, .modal-confirm { padding: 12px; font-size: 15px; border-radius: 12px; }
+    }
+
+    /* ── LARGE DESKTOP (≥ 1440px) ── */
+    @media (min-width: 1440px) {
+      .app { max-width: 1100px; }
+      .calc-right { width: 400px; }
+      .splash-cards { max-width: 600px; }
+      .splash-card { padding: 36px 28px 32px; }
+      .plate-card { min-width: 95px; padding: 16px 18px; }
+      .plate-circle { width: 54px; height: 54px; }
+      .plate-inner { width: 34px; height: 34px; font-size: 11px; }
+    }
+
+    /* ── FOOTER DISCLAIMER (ultra-subtle) ── */
+    .site-footer {
+      margin-top: 4rem;
+      padding: 2rem 1rem 1.5rem;
+      text-align: center;
+    }
+    .footer-disclaimer {
+      font-size: 10px;
+      color: var(--text3);
+      line-height: 2;
+      max-width: 420px;
+      margin: 0 auto;
+      opacity: 0.45;
+      transition: opacity 0.3s ease;
+      letter-spacing: 0.01em;
+    }
+    .footer-disclaimer:hover { opacity: 0.75; }
+    .footer-dot {
+      display: inline-block;
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--text3);
+      vertical-align: middle;
+      margin: 0 6px;
+      opacity: 0.5;
+    }
+    /* price notice — tiny chip */
+    .price-notice {
+      display: none;
+      align-items: center;
+      gap: 5px;
+      margin-top: 0.75rem;
+      font-size: 10.5px;
+      color: var(--text3);
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ── SPLASH ── -->
+  <div id="splash">
+    <div class="splash-icon">🍣</div>
+    <div class="splash-title">Sushi Calculator</div>
+    <div class="splash-sub">คำนวณค่าจานซูชิ · ราคารวม SC แล้ว</div>
+
+    <div class="splash-question">วันนี้กินร้านไหน?</div>
+
+    <div class="splash-cards">
+
+      <!-- Sushiro -->
+      <button class="splash-card sushiro-card" onclick="startCalc('sushiro')">
+        <div class="splash-emoji">🔴</div>
+        <div class="splash-store-name">Sushiro</div>
+        <div class="splash-plates">
+          <div class="mini-plate" style="background:#fff;border-color:#bbb;"></div>
+          <div class="mini-plate" style="background:#8B0000;"></div>
+          <div class="mini-plate" style="background:#b0b0b0;"></div>
+          <div class="mini-plate" style="background:#c8a600;"></div>
+          <div class="mini-plate" style="background:#111;"></div>
+        </div>
+        <div class="splash-price-range">30 – 100 ฿ / จาน</div>
+        <div class="splash-sc-badge badge-sc">+ SC 10%</div>
+      </button>
+
+      <!-- Katsu Midori -->
+      <button class="splash-card katsu-card" onclick="startCalc('katsu')">
+        <div class="splash-emoji">🟢</div>
+        <div class="splash-store-name">Katsu Midori</div>
+        <div class="splash-plates">
+          <div class="mini-plate" style="background:#e74c3c;"></div>
+          <div class="mini-plate" style="background:#2980b9;"></div>
+          <div class="mini-plate" style="background:#27ae60;"></div>
+          <div class="mini-plate" style="background:#f39c12;"></div>
+          <div class="mini-plate" style="background:#8B4513;"></div>
+        </div>
+        <div class="splash-price-range">40 – 180 ฿ / จาน</div>
+        <div class="splash-sc-badge badge-sc-g">+ SC 10%</div>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ── CALCULATOR ── -->
+  <div id="calculator">
+
+    <div class="calc-header">
+      <button class="back-btn" onclick="goBack()" title="เลือกร้านใหม่">
+        <i class="ti ti-arrow-left" aria-hidden="true"></i>
+      </button>
+      <span class="calc-store-name" id="calc-store-name"></span>
+      <span class="calc-sc-tag" id="calc-sc-tag"></span>
+    </div>
+
+    <div class="calc-body">
+      <div class="calc-left">
+        <div class="section-label">เลือกจาน (กดเพิ่มทีละจาน)</div>
+        <div class="plates-grid" id="plates-grid"></div>
+      </div>
+
+      <div class="calc-right">
+        <div class="summary-box">
+          <div class="summary-head">
+            <i class="ti ti-receipt" aria-hidden="true" style="font-size:15px;"></i>
+            สรุปบิล
+          </div>
+          <div id="summary-content">
+            <div class="empty-state">ยังไม่ได้เลือกจาน<br>กดที่จานด้านบนเพื่อเพิ่ม</div>
+          </div>
+        </div>
+
+        <button class="reset-btn" onclick="askReset()">
+          <i class="ti ti-refresh" aria-hidden="true" style="font-size:14px;"></i>
+          ล้างจานทั้งหมด
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── PRICE NOTICE (in calc screen) ── -->
+  <div class="price-notice" id="price-notice">
+    <i class="ti ti-info-circle" aria-hidden="true"></i>
+    ราคาอาจมีการเปลี่ยนแปลงตามร้านค้า
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer class="site-footer" role="contentinfo" aria-label="Legal disclaimer">
+    <p class="footer-disclaimer">
+      ไม่มีส่วนเกี่ยวข้องกับ Sushiro หรือ Katsu Midori อย่างเป็นทางการ
+      <span class="footer-dot"></span>
+      ราคาอาจมีการเปลี่ยนแปลงได้
+      <span class="footer-dot"></span>
+      ผู้พัฒนาไม่รับผิดชอบต่อความเสียหายใดๆ<br>
+      © <span id="footer-year"></span> Sushi Calculator · Unofficial Fan Tool
+    </p>
+  </footer>
+
+</div>
+
+<!-- Confirm modal -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-box">
+    <div class="modal-icon">🗑️</div>
+    <div class="modal-title">ล้างจานทั้งหมด?</div>
+    <div class="modal-sub">รายการที่เลือกไว้จะถูกลบออกหมด</div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">ยกเลิก</button>
+      <button class="modal-confirm" onclick="confirmReset()">ล้างเลย</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORES = {
+    sushiro: {
+      name: 'Sushiro',
+      sc: true,
+      color: '#c0392b',
+      plates: [
+        { price: 30,  outer: '#e8e8e8', inner: '#ffffff', innerBorder: '#ccc',    label: 'ขาว',  text: '#666' },
+        { price: 40,  outer: '#8B0000', inner: '#a00000', innerBorder: '#6b0000', label: 'แดง',  text: '#fff' },
+        { price: 60,  outer: '#909090', inner: '#b8b8b8', innerBorder: '#777',    label: 'เงิน', text: '#fff' },
+        { price: 80,  outer: '#9a7a00', inner: '#c8a600', innerBorder: '#856900', label: 'ทอง', text: '#fff' },
+        { price: 100, outer: '#111',    inner: '#222',    innerBorder: '#000',    label: 'ดำ',   text: '#fff' },
+      ]
+    },
+    katsu: {
+      name: 'Katsu Midori',
+      sc: true,
+      color: '#1e7d52',
+      plates: [
+        { price: 40,  outer: '#c0392b', inner: '#e74c3c', innerBorder: '#a93226', label: 'แดง',      text: '#fff' },
+        { price: 50,  outer: '#1a6a9a', inner: '#2980b9', innerBorder: '#1a5f8a', label: 'ฟ้า',      text: '#fff' },
+        { price: 60,  outer: '#1e8449', inner: '#27ae60', innerBorder: '#196f3d', label: 'เขียว',    text: '#fff' },
+        { price: 70,  outer: '#d68910', inner: '#f39c12', innerBorder: '#b7770d', label: 'เหลือง',   text: '#fff' },
+        { price: 80,  outer: '#6b3a10', inner: '#8B4513', innerBorder: '#5a2e0a', label: 'น้ำตาล',  text: '#fff' },
+        { price: 90,  outer: '#c07060', inner: '#e8a090', innerBorder: '#a05848', label: 'ชมพู',     text: '#fff' },
+        { price: 100, outer: '#8a7040', inner: '#b8a060', innerBorder: '#706030', label: 'เบจ',      text: '#fff' },
+        { price: 120, outer: '#9a8850', inner: '#c8b070', innerBorder: '#807040', label: 'ครีม',     text: '#fff' },
+        { price: 140, outer: '#7b241c', inner: '#922b21', innerBorder: '#641e16', label: 'เลือดหมู', text: '#fff' },
+        { price: 150, outer: '#8a6000', inner: '#c8900a', innerBorder: '#704f00', label: 'ทอง',      text: '#fff' },
+        { price: 160, outer: '#2c4f85', inner: '#4a6fa5', innerBorder: '#1e3a6e', label: 'กรมท่า',  text: '#fff' },
+        { price: 180, outer: '#0d2040', inner: '#1a3a5c', innerBorder: '#081530', label: 'กรมเข้ม', text: '#fff' },
+      ]
+    }
+  };
+
+  let currentStore = null;
+  let counts = {};
+
+  function startCalc(store) {
+    currentStore = store;
+    counts = {};
+
+    const s = STORES[store];
+    document.getElementById('calc-store-name').textContent = s.name;
+
+    const tag = document.getElementById('calc-sc-tag');
+    tag.textContent = 'SC 10%';
+    tag.style.background = store === 'sushiro' ? 'rgba(192,57,43,0.10)' : 'rgba(30,125,82,0.10)';
+    tag.style.color = s.color;
+
+    document.getElementById('splash').style.display = 'none';
+    document.getElementById('calculator').style.display = 'block';
+
+    renderPlates();
+    renderSummary();
+  }
+
+  function goBack() {
+    document.getElementById('calculator').style.display = 'none';
+    document.getElementById('splash').style.display = 'flex';
+    counts = {};
+    currentStore = null;
+  }
+
+  function renderPlates() {
+    const grid = document.getElementById('plates-grid');
+    const plates = STORES[currentStore].plates;
+    grid.innerHTML = plates.map(p => {
+      const count = counts[p.price] || 0;
+      const selStyle = count > 0 ? `border-color:${p.outer};border-width:2px;` : '';
+      return `
+        <div class="plate-card${count > 0 ? ' selected' : ''}" style="${selStyle}" onclick="addPlate(${p.price})" title="${p.price} บาท">
+          ${count > 0 ? `<div class="plate-badge" style="background:${p.outer}">${count}</div>` : ''}
+          <div class="plate-circle" style="background:${p.outer};">
+            <div class="plate-inner" style="background:${p.inner};border:1.5px solid ${p.innerBorder};">
+              <span style="color:${p.text};">${p.label}</span>
+            </div>
+          </div>
+          <div class="plate-price">${p.price} ฿</div>
+        </div>`;
+    }).join('');
+  }
+
+  function addPlate(price) {
+    counts[price] = (counts[price] || 0) + 1;
+    renderPlates();
+    renderSummary();
+  }
+
+  function removePlate(price) {
+    if ((counts[price] || 0) > 0) {
+      counts[price]--;
+      if (counts[price] === 0) delete counts[price];
+    }
+    renderPlates();
+    renderSummary();
+  }
+
+  function renderSummary() {
+    const box = document.getElementById('summary-content');
+    const plates = STORES[currentStore].plates;
+    const accentColor = STORES[currentStore].color;
+
+    const selected = plates.filter(p => (counts[p.price] || 0) > 0);
+    if (selected.length === 0) {
+      box.innerHTML = '<div class="empty-state">ยังไม่ได้เลือกจาน<br>กดที่จานด้านบนเพื่อเพิ่ม</div>';
+      return;
+    }
+
+    let subtotal = 0;
+    const rows = selected.map(p => {
+      const qty = counts[p.price];
+      const line = p.price * qty;
+      subtotal += line;
+      return `
+        <div class="summary-row">
+          <span>
+            <span class="plate-dot" style="background:${p.outer};border:1px solid ${p.innerBorder};"></span>
+            จาน ${p.price} ฿
+          </span>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="val">${line.toLocaleString()} ฿</span>
+            <div class="qty-ctrl">
+              <button class="qc-btn" onclick="removePlate(${p.price})" title="ลด 1 จาน">−</button>
+              <span class="qc-num">${qty}</span>
+              <button class="qc-btn" onclick="addPlate(${p.price})" title="เพิ่ม 1 จาน">+</button>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+    const sc    = Math.round(subtotal * 0.10);
+    const total = subtotal + sc;
+
+    box.innerHTML = `
+      <div class="summary-rows">${rows}</div>
+      <hr class="divider">
+      <div class="summary-row" style="margin-bottom:5px;">
+        <span>ยอดก่อน SC</span>
+        <span class="val">${subtotal.toLocaleString()} ฿</span>
+      </div>
+      <div class="summary-row">
+        <span>Service Charge 10%</span>
+        <span class="val">+ ${sc.toLocaleString()} ฿</span>
+      </div>
+      <hr class="divider">
+      <div class="total-row">
+        <span class="total-label">รวมทั้งหมด</span>
+        <span class="total-amount" style="color:${accentColor}">${total.toLocaleString()} ฿</span>
+      </div>
+      <div class="sc-note">* รวม Service Charge 10% แล้ว</div>
+    `;
+  }
+
+  function askReset() {
+    const hasItems = Object.values(counts).some(v => v > 0);
+    if (!hasItems) return;
+    document.getElementById('confirm-modal').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('confirm-modal').classList.remove('show');
+  }
+
+  function confirmReset() {
+    closeModal();
+    counts = {};
+    renderPlates();
+    renderSummary();
+  }
+
+  document.getElementById('confirm-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+
+</script>
+</body>
+</html>
