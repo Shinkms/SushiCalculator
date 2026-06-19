@@ -87,10 +87,11 @@ button,input{font:inherit}
 .sp-total{padding:10px 14px 12px;border-top:1px solid rgba(255,255,255,.10);display:flex;flex-direction:column;gap:2px}
 .tlbl{font-size:11px;color:rgba(255,255,255,.4)}
 .tnum{font-size:26px;font-weight:700;letter-spacing:-.04em}
-.sp-foot{padding:0 14px 12px;display:flex;justify-content:space-between;align-items:center}
+.sp-foot{padding:0 14px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .tnote{font-size:9px;color:rgba(255,255,255,.22)}
-.reset-lnk{font-size:10px;color:rgba(255,255,255,.28);background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:2px;padding:0;transition:color .15s}
-.reset-lnk:hover{color:rgba(255,255,255,.5)}
+.reset-lnk{font-size:11px;font-weight:700;color:#ff6b63;background:rgba(255,69,58,.12);border:1px solid rgba(255,69,58,.35);border-radius:10px;cursor:pointer;font-family:inherit;text-decoration:none;padding:8px 10px;transition:background .15s,border-color .15s,color .15s;touch-action:manipulation;white-space:nowrap}
+.reset-lnk:hover{color:#fff;background:rgba(255,69,58,.22);border-color:rgba(255,69,58,.55)}
+.reset-lnk:active{transform:scale(.97)}
 
 /* modal */
 .modal-wrap{display:none;position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:50;align-items:center;justify-content:center;border-radius:16px;padding:18px}
