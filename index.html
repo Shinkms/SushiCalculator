@@ -1,900 +1,286 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- ── PRIMARY SEO ── -->
-  <title>Sushi Calculator | คำนวณราคาซูชิ Sushiro & Katsu Midori รวม SC แล้ว</title>
-  <meta name="description" content="คำนวณราคาซูชิแบบง่าย รองรับ Sushiro และ Katsu Midori คิด Service Charge 10% ให้อัตโนมัติ รู้ยอดรวมก่อนจ่ายจริง " />
-  <meta name="keywords" content="คำนวณราคาซูชิ, sushi calculator, sushiro ราคา, katsu midori ราคา, คิด SC ซูชิ, service charge ซูชิ, ราคาจานซูชิ, sushiro SC 10%, คำนวณบิลซูชิ" />
-  <meta name="robots" content="index, follow" />
-  <meta name="author" content="Sushi Calculator" />
-  <link rel="canonical" href="https://sushicalculator.vercel.app/" />
-
-  <!-- ── OPEN GRAPH (Facebook / LINE / Discord) ── -->
-  <meta property="og:type"        content="website" />
-  <meta property="og:url"         content="https://sushicalculator.vercel.app/" />
-  <meta property="og:title"       content="Sushi Calculator 🍣 | คำนวณราคาซูชิ รวม SC แล้ว" />
-  <meta property="og:description" content="คำนวณราคาซูชิ Sushiro และ Katsu Midori รวม Service Charge 10% อัตโนมัติ" />
-  <meta property="og:locale"      content="th_TH" />
-  <meta property="og:site_name"   content="Sushi Calculator" />
-
-  <!-- ── TWITTER CARD ── -->
-  <meta name="twitter:card"        content="summary" />
-  <meta name="twitter:title"       content="Sushi Calculator 🍣 | คำนวณราคาซูชิ รวม SC" />
-  <meta name="twitter:description" content="คำนวณบิลซูชิ Sushiro & Katsu Midori รวม Service Charge 10% อัตโนมัติ" />
-
-  <!-- ── JSON-LD Structured Data (Google Rich Results) ── -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Sushi Calculator",
-    "url": "https://sushicalculator.vercel.app/",
-    "description": "คำนวณราคาซูชิ Sushiro และ Katsu Midori รวม Service Charge 10% อัตโนมัติ",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "Any",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "THB"
-    },
-    "inLanguage": "th",
-    "keywords": "sushi calculator, คำนวณราคาซูชิ, sushiro, katsu midori, SC 10%"
-  }
-  </script>
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #f7f7f5;
-      --surface: #ffffff;
-      --surface2: #f2f2f0;
-      --border: rgba(0,0,0,0.12);
-      --border2: rgba(0,0,0,0.22);
-      --text: #1a1a1a;
-      --text2: #5a5a5a;
-      --text3: #999;
-      --radius-md: 10px;
-      --radius-lg: 14px;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #141414;
-        --surface: #1e1e1e;
-        --surface2: #272727;
-        --border: rgba(255,255,255,0.10);
-        --border2: rgba(255,255,255,0.20);
-        --text: #f0f0f0;
-        --text2: #a0a0a0;
-        --text3: #666;
-      }
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans Thai', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem 1rem 0;
-    }
-
-    .app { width: 100%; max-width: 560px; margin: 0 auto; transition: max-width 0.3s ease; }
-
-    /* ── SPLASH SCREEN ── */
-    #splash {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 3rem;
-    }
-
-    .splash-icon { font-size: 52px; margin-bottom: 1rem; line-height: 1; }
-
-    .splash-title {
-      font-size: 24px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 6px;
-    }
-    .splash-sub {
-      font-size: 14px;
-      color: var(--text2);
-      margin-bottom: 2.5rem;
-    }
-
-    .splash-question {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text2);
-      margin-bottom: 1rem;
-      letter-spacing: 0.01em;
-    }
-
-    .splash-cards {
-      display: flex;
-      gap: 14px;
-      width: 100%;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .splash-card {
-      flex: 1;
-      border-radius: 18px;
-      border: 1.5px solid var(--border);
-      background: var(--surface);
-      cursor: pointer;
-      padding: 24px 16px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      transition: all 0.18s ease;
-      font-family: inherit;
-    }
-    .splash-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.10);
-    }
-    .splash-card:active { transform: scale(0.98); }
-    .splash-card.sushiro-card:hover { border-color: #c0392b; }
-    .splash-card.katsu-card:hover   { border-color: #1e7d52; }
-
-    .splash-emoji { font-size: 36px; line-height: 1; }
-    .splash-store-name { font-size: 17px; font-weight: 700; color: var(--text); }
-    .splash-price-range {
-      font-size: 12px;
-      color: var(--text2);
-      background: var(--surface2);
-      padding: 3px 10px;
-      border-radius: 20px;
-    }
-    .splash-sc-badge {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 20px;
-    }
-    .badge-sc    { background: rgba(192,57,43,0.10); color: #c0392b; }
-    .badge-sc-g  { background: rgba(30,125,82,0.10); color: #1e7d52; }
-
-    .splash-plates {
-      display: flex;
-      gap: 4px;
-      margin-top: 4px;
-    }
-    .mini-plate {
-      width: 16px; height: 16px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(0,0,0,0.15);
-    }
-
-    /* ── CALCULATOR SCREEN ── */
-    #calculator { display: none; }
-    .calc-body {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    .calc-left, .calc-right {
-      width: 100%;
-    }
-
-    .calc-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 1.5rem;
-    }
-    .back-btn {
-      width: 34px; height: 34px;
-      border-radius: 50%;
-      border: 1px solid var(--border2);
-      background: var(--surface);
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px; color: var(--text2);
-      transition: background 0.12s;
-      flex-shrink: 0;
-      font-family: inherit;
-    }
-    .back-btn:hover { background: var(--surface2); }
-    .calc-store-name { font-size: 17px; font-weight: 700; flex: 1; }
-    .calc-sc-tag {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 9px;
-      border-radius: 20px;
-    }
-
-    .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text2);
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-
-    .plates-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 1.5rem;
-    }
-
-    .plate-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      padding: 10px 12px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      background: var(--surface);
-      cursor: pointer;
-      transition: all 0.14s ease;
-      min-width: 72px;
-      position: relative;
-      user-select: none;
-    }
-    .plate-card:hover { border-color: var(--border2); background: var(--surface2); transform: translateY(-1px); }
-    .plate-card:active { transform: scale(0.97); }
-    .plate-card.selected { border-width: 2px; }
-
-    .plate-circle {
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .plate-inner {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 9.5px; font-weight: 600;
-    }
-    .plate-price { font-size: 13px; font-weight: 600; color: var(--text); }
-
-    .plate-badge {
-      position: absolute;
-      top: -7px; right: -7px;
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      font-size: 11px; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff;
-      border: 2px solid var(--surface);
-    }
-
-    /* Summary */
-    .summary-box {
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      background: var(--surface);
-      padding: 1.1rem 1.25rem;
-      margin-bottom: 1rem;
-    }
-    .summary-head {
-      font-size: 12px; font-weight: 600;
-      color: var(--text2);
-      letter-spacing: 0.05em; text-transform: uppercase;
-      margin-bottom: 14px;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .summary-rows { display: flex; flex-direction: column; gap: 7px; }
-    .summary-row {
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 13px; color: var(--text2);
-    }
-    .summary-row .val { font-weight: 500; color: var(--text); }
-    .summary-row .plate-dot {
-      display: inline-block; width: 9px; height: 9px;
-      border-radius: 50%; vertical-align: -1px; margin-right: 6px;
-    }
-
-    .divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
-
-    .total-row { display: flex; justify-content: space-between; align-items: baseline; }
-    .total-label { font-size: 14px; font-weight: 600; color: var(--text); }
-    .total-amount { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; }
-
-    .sc-note { font-size: 11px; color: var(--text3); margin-top: 8px; text-align: right; }
-
-    .empty-state {
-      text-align: center; padding: 1.5rem 0;
-      font-size: 13px; color: var(--text3); line-height: 1.8;
-    }
-
-    .reset-btn {
-      width: 100%; padding: 11px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border2);
-      background: transparent; cursor: pointer;
-      font-size: 13px; color: var(--text2);
-      font-family: inherit;
-      transition: background 0.12s;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-    }
-    .reset-btn:hover { background: var(--surface2); }
-
-    /* Confirm modal */
-    .modal-overlay {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.38);
-      z-index: 100;
-      align-items: center; justify-content: center;
-      padding: 1rem;
-    }
-    .modal-overlay.show { display: flex; }
-    .modal-box {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      padding: 1.5rem 1.25rem 1.25rem;
-      width: 100%; max-width: 320px;
-      text-align: center;
-    }
-    .modal-icon { font-size: 28px; margin-bottom: 10px; }
-    .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
-    .modal-sub   { font-size: 13px; color: var(--text2); margin-bottom: 1.25rem; }
-    .modal-btns  { display: flex; gap: 8px; }
-    .modal-cancel {
-      flex: 1; padding: 10px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border2);
-      background: transparent; cursor: pointer;
-      font-size: 14px; font-weight: 500; color: var(--text2);
-      font-family: inherit; transition: background 0.12s;
-    }
-    .modal-cancel:hover { background: var(--surface2); }
-    .modal-confirm {
-      flex: 1; padding: 10px;
-      border-radius: var(--radius-md);
-      border: none;
-      background: #e74c3c; cursor: pointer;
-      font-size: 14px; font-weight: 600; color: #fff;
-      font-family: inherit; transition: opacity 0.12s;
-    }
-    .modal-confirm:hover { opacity: 0.88; }
-
-    /* inline +/- qty controls in summary */
-    .qty-ctrl {
-      display: flex; align-items: center; gap: 6px;
-    }
-    .qc-btn {
-      width: 24px; height: 24px; border-radius: 50%;
-      border: 1px solid var(--border2);
-      background: var(--surface2); cursor: pointer;
-      font-size: 15px; color: var(--text);
-      display: flex; align-items: center; justify-content: center;
-      font-family: inherit; transition: background 0.1s; flex-shrink: 0;
-      line-height: 1;
-    }
-    .qc-btn:hover { background: var(--border); }
-    .qc-num { font-size: 13px; font-weight: 600; min-width: 18px; text-align: center; color: var(--text); }
-
-    /* ── MOBILE (≤ 480px) ── */
-    @media (max-width: 480px) {
-      body { padding: 0.75rem 0.5rem 3rem; }
-      .app { max-width: 100%; }
-
-      .splash-icon { font-size: 42px; }
-      .splash-title { font-size: 20px; }
-      .splash-sub { font-size: 12px; margin-bottom: 1.5rem; }
-      .splash-question { font-size: 13px; }
-      .splash-cards { gap: 10px; flex-direction: column; }
-      .splash-card { padding: 18px 12px 16px; flex-direction: row; gap: 12px; border-radius: 14px; }
-      .splash-emoji { font-size: 28px; }
-      .splash-store-name { font-size: 15px; }
-      .splash-price-range { font-size: 11px; }
-      .splash-plates { display: none; }
-
-      .calc-header { margin-bottom: 1rem; }
-      .calc-store-name { font-size: 15px; }
-      .section-label { font-size: 10px; margin-bottom: 8px; }
-
-      .plates-grid { gap: 6px; }
-      .plate-card { min-width: 60px; padding: 7px 8px; border-radius: 8px; }
-      .plate-circle { width: 34px; height: 34px; }
-      .plate-inner { width: 22px; height: 22px; font-size: 8.5px; }
-      .plate-price { font-size: 11px; }
-      .plate-badge { width: 18px; height: 18px; font-size: 10px; top: -6px; right: -6px; }
-
-      .summary-box { padding: 0.9rem 1rem; border-radius: 12px; }
-      .summary-head { font-size: 11px; margin-bottom: 10px; }
-      .summary-row { font-size: 12px; }
-      .total-amount { font-size: 24px; }
-
-      .reset-btn { font-size: 12px; padding: 9px; }
-
-      .qc-btn { width: 22px; height: 22px; font-size: 13px; }
-      .qc-num { font-size: 12px; }
-
-      .modal-box { padding: 1.25rem 1rem 1rem; }
-      .modal-title { font-size: 15px; }
-      .modal-sub { font-size: 12px; }
-    }
-
-    /* ── TABLET / iPad (481px – 1024px) ── */
-    @media (min-width: 481px) and (max-width: 1024px) {
-      body { padding: 2rem 2rem 4rem; }
-      .app { max-width: 680px; }
-
-      .splash-icon { font-size: 60px; margin-bottom: 1.25rem; }
-      .splash-title { font-size: 28px; }
-      .splash-sub { font-size: 15px; margin-bottom: 3rem; }
-      .splash-question { font-size: 16px; margin-bottom: 1.25rem; }
-      .splash-cards { gap: 16px; }
-      .splash-card { padding: 28px 20px 24px; border-radius: 20px; }
-      .splash-emoji { font-size: 40px; }
-      .splash-store-name { font-size: 19px; }
-      .splash-price-range { font-size: 13px; padding: 4px 12px; }
-      .mini-plate { width: 18px; height: 18px; }
-
-      .calc-header { margin-bottom: 1.75rem; }
-      .calc-store-name { font-size: 19px; }
-      .section-label { font-size: 12px; margin-bottom: 12px; }
-
-      .plates-grid { gap: 10px; }
-      .plate-card { min-width: 80px; padding: 12px 14px; border-radius: 12px; }
-      .plate-circle { width: 48px; height: 48px; }
-      .plate-inner { width: 30px; height: 30px; font-size: 10px; }
-      .plate-price { font-size: 14px; }
-
-      .summary-box { padding: 1.25rem 1.5rem; border-radius: 16px; }
-      .summary-head { font-size: 13px; margin-bottom: 16px; }
-      .summary-row { font-size: 14px; }
-      .total-amount { font-size: 32px; }
-
-      .reset-btn { padding: 13px; font-size: 14px; border-radius: 12px; }
-
-      .qc-btn { width: 28px; height: 28px; font-size: 16px; }
-      .qc-num { font-size: 14px; min-width: 22px; }
-
-      .modal-box { max-width: 380px; padding: 2rem 1.5rem 1.5rem; border-radius: 16px; }
-      .modal-icon { font-size: 34px; }
-      .modal-title { font-size: 18px; }
-      .modal-sub { font-size: 14px; }
-      .modal-cancel, .modal-confirm { padding: 12px; font-size: 15px; }
-    }
-
-    /* ── DESKTOP / PC (≥ 1025px) ── */
-    @media (min-width: 1025px) {
-      body { padding: 3rem 2rem 4rem; }
-      .app { max-width: 960px; }
-
-      #splash { padding-top: 5rem; }
-      .splash-icon { font-size: 68px; margin-bottom: 1.5rem; }
-      .splash-title { font-size: 32px; }
-      .splash-sub { font-size: 16px; margin-bottom: 3.5rem; }
-      .splash-question { font-size: 17px; margin-bottom: 1.5rem; }
-      .splash-cards { gap: 20px; max-width: 520px; margin: 0 auto; }
-      .splash-card {
-        padding: 32px 24px 28px;
-        border-radius: 22px;
-        transition: all 0.22s ease;
-      }
-      .splash-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 36px rgba(0,0,0,0.12);
-      }
-      .splash-emoji { font-size: 44px; }
-      .splash-store-name { font-size: 20px; }
-      .splash-price-range { font-size: 13px; padding: 4px 14px; }
-      .mini-plate { width: 20px; height: 20px; }
-
-      .calc-header { margin-bottom: 2rem; }
-      .calc-store-name { font-size: 22px; }
-      .calc-sc-tag { font-size: 12px; padding: 4px 12px; }
-      .back-btn { width: 38px; height: 38px; font-size: 16px; }
-
-      .calc-body {
-        flex-direction: row;
-        gap: 2rem;
-        align-items: flex-start;
-      }
-      .calc-left {
-        flex: 1;
-        min-width: 0;
-        position: sticky;
-        top: 2rem;
-      }
-      .calc-right {
-        width: 340px;
-        flex-shrink: 0;
-      }
-
-      .section-label { font-size: 12px; margin-bottom: 14px; }
-      .plates-grid { gap: 10px; margin-bottom: 0; }
-      .plate-card {
-        min-width: 85px;
-        padding: 14px 16px;
-        border-radius: 12px;
-        transition: all 0.16s ease;
-      }
-      .plate-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      }
-      .plate-circle { width: 50px; height: 50px; }
-      .plate-inner { width: 32px; height: 32px; font-size: 10.5px; }
-      .plate-price { font-size: 14px; }
-      .plate-badge { width: 22px; height: 22px; font-size: 12px; }
-
-      .summary-box {
-        padding: 1.5rem;
-        border-radius: 16px;
-        margin-bottom: 1rem;
-      }
-      .summary-head { font-size: 13px; margin-bottom: 18px; }
-      .summary-row { font-size: 14px; }
-      .summary-rows { gap: 9px; }
-      .total-amount { font-size: 34px; }
-      .sc-note { font-size: 12px; }
-
-      .reset-btn { padding: 13px; font-size: 14px; border-radius: 12px; }
-
-      .qc-btn { width: 28px; height: 28px; font-size: 16px; }
-      .qc-num { font-size: 14px; min-width: 22px; }
-
-      .modal-box { max-width: 400px; padding: 2rem 1.75rem 1.5rem; border-radius: 18px; }
-      .modal-icon { font-size: 36px; }
-      .modal-title { font-size: 18px; }
-      .modal-sub { font-size: 14px; }
-      .modal-cancel, .modal-confirm { padding: 12px; font-size: 15px; border-radius: 12px; }
-    }
-
-    /* ── LARGE DESKTOP (≥ 1440px) ── */
-    @media (min-width: 1440px) {
-      .app { max-width: 1100px; }
-      .calc-right { width: 400px; }
-      .splash-cards { max-width: 600px; }
-      .splash-card { padding: 36px 28px 32px; }
-      .plate-card { min-width: 95px; padding: 16px 18px; }
-      .plate-circle { width: 54px; height: 54px; }
-      .plate-inner { width: 34px; height: 34px; font-size: 11px; }
-    }
-
-    /* ── FOOTER DISCLAIMER (ultra-subtle) ── */
-    .site-footer {
-      margin-top: 4rem;
-      padding: 2rem 1rem 1.5rem;
-      text-align: center;
-    }
-    .footer-disclaimer {
-      font-size: 10px;
-      color: var(--text3);
-      line-height: 2;
-      max-width: 420px;
-      margin: 0 auto;
-      opacity: 0.45;
-      transition: opacity 0.3s ease;
-      letter-spacing: 0.01em;
-    }
-    .footer-disclaimer:hover { opacity: 0.75; }
-    .footer-dot {
-      display: inline-block;
-      width: 3px; height: 3px;
-      border-radius: 50%;
-      background: var(--text3);
-      vertical-align: middle;
-      margin: 0 6px;
-      opacity: 0.5;
-    }
-    /* price notice — tiny chip */
-    .price-notice {
-      display: none;
-      align-items: center;
-      gap: 5px;
-      margin-top: 0.75rem;
-      font-size: 10.5px;
-      color: var(--text3);
-      opacity: 0.6;
-    }
-  </style>
-</head>
-<body>
-
-<div class="app">
-
-  <!-- ── SPLASH ── -->
-  <div id="splash">
-    <div class="splash-icon">🍣</div>
-    <div class="splash-title">Sushi Calculator</div>
-    <div class="splash-sub">คำนวณค่าจานซูชิ · ราคารวม SC แล้ว</div>
-
-    <div class="splash-question">วันนี้กินร้านไหน?</div>
-
-    <div class="splash-cards">
-
-      <!-- Sushiro -->
-      <button class="splash-card sushiro-card" onclick="startCalc('sushiro')">
-        <div class="splash-emoji">🔴</div>
-        <div class="splash-store-name">Sushiro</div>
-        <div class="splash-plates">
-          <div class="mini-plate" style="background:#fff;border-color:#bbb;"></div>
-          <div class="mini-plate" style="background:#8B0000;"></div>
-          <div class="mini-plate" style="background:#b0b0b0;"></div>
-          <div class="mini-plate" style="background:#c8a600;"></div>
-          <div class="mini-plate" style="background:#111;"></div>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;-webkit-font-smoothing:antialiased}
+.root{min-height:520px;background:#000;color:#f5f5f7;border-radius:16px;overflow:hidden;position:relative}
+.noise{position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 70% 60% at 15% 20%,rgba(255,55,48,0.22) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 85% 75%,rgba(48,209,88,0.18) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 55% 10%,rgba(100,100,255,0.10) 0%,transparent 60%)}
+.z1{position:relative;z-index:1}
+
+/* splash */
+.splash{display:flex;flex-direction:column;align-items:center;text-align:center;padding:44px 24px 36px}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:12px}
+.hero{font-size:54px;font-weight:700;letter-spacing:-.04em;line-height:1;color:#fff;margin-bottom:10px}
+.hero-sub{font-size:15px;font-weight:300;color:rgba(255,255,255,.5);margin-bottom:36px;line-height:1.6}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:500px}
+.scard{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:22px 18px 20px;cursor:pointer;text-align:left;font-family:inherit;color:#fff;transition:border-color .25s,transform .25s,background .25s;position:relative;overflow:hidden}
+.scard::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;border-radius:inherit}
+.scard-r::before{background:radial-gradient(ellipse at top left,rgba(255,69,58,.2),transparent 70%)}
+.scard-g::before{background:radial-gradient(ellipse at top left,rgba(48,209,88,.2),transparent 70%)}
+.scard:hover{transform:translateY(-4px)}
+.scard:hover::before{opacity:1}
+.scard-r:hover{border-color:rgba(255,69,58,.5);background:rgba(255,69,58,.06)}
+.scard-g:hover{border-color:rgba(48,209,88,.5);background:rgba(48,209,88,.06)}
+.scard:active{transform:scale(.97)}
+.sbadge{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:20px;display:inline-block;margin-bottom:14px}
+.sbadge-r{background:rgba(255,69,58,.18);color:#ff6b63;border:1px solid rgba(255,69,58,.3)}
+.sbadge-g{background:rgba(48,209,88,.18);color:#4cd964;border:1px solid rgba(48,209,88,.3)}
+.sdots{display:flex;gap:4px;margin-bottom:12px}
+.sdot{width:11px;height:11px;border-radius:50%;border:1px solid rgba(255,255,255,.15)}
+.sname{font-size:20px;font-weight:700;letter-spacing:-.03em;margin-bottom:4px}
+.sinfo{font-size:11px;color:rgba(255,255,255,.4);line-height:1.6}
+.sarrow{position:absolute;bottom:18px;right:16px;font-size:18px;color:rgba(255,255,255,.25);transition:transform .2s,color .2s}
+.scard:hover .sarrow{transform:translateX(3px);color:rgba(255,255,255,.5)}
+
+/* calculator */
+.calc{display:none;flex-direction:column;height:520px}
+.calc-header{display:flex;align-items:center;gap:12px;padding:16px 20px 12px;border-bottom:1px solid rgba(255,255,255,.08)}
+.back{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:rgba(255,255,255,.7);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;flex-shrink:0;transition:background .15s}
+.back:hover{background:rgba(255,255,255,.14)}
+.hname{font-size:16px;font-weight:700;letter-spacing:-.02em;flex:1}
+.hpill{font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.06em}
+.calc-body{display:grid;grid-template-columns:1fr 200px;flex:1;overflow:hidden}
+.plates-wrap{overflow-y:auto;padding:14px 16px;border-right:1px solid rgba(255,255,255,.07)}
+.plates-wrap::-webkit-scrollbar{width:4px}
+.plates-wrap::-webkit-scrollbar-track{background:transparent}
+.plates-wrap::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:4px}
+.slabel{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:10px}
+.pgrid{display:flex;flex-wrap:wrap;gap:7px}
+.pbtn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 9px 8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;cursor:pointer;font-family:inherit;min-width:60px;position:relative;transition:background .15s,border-color .15s,transform .15s}
+.pbtn:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18);transform:translateY(-1px)}
+.pbtn:active{transform:scale(.95)}
+.pbtn.on{border-width:1.5px}
+.pring{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative}
+.pring::after{content:'';position:absolute;inset:3px;border-radius:50%;border:1px solid rgba(255,255,255,.15)}
+.pface{width:23px;height:23px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;z-index:1}
+.plbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.85)}
+.pbadge{position:absolute;top:-5px;right:-5px;width:16px;height:16px;border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;border:1.5px solid #000}
+
+/* summary panel */
+.spanel{display:flex;flex-direction:column;background:rgba(255,255,255,.035);overflow:hidden}
+.sp-head{padding:14px 14px 0;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.sp-body{flex:1;overflow-y:auto;padding:10px 14px 0}
+.sp-body::-webkit-scrollbar{display:none}
+.empty-s{display:flex;flex-direction:column;align-items:center;justify-content:center;height:120px;gap:8px}
+.empty-icon{font-size:26px;opacity:.25}
+.empty-msg{font-size:11px;color:rgba(255,255,255,.25);text-align:center;line-height:1.6}
+.brow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);gap:4px}
+.brow:last-child{border-bottom:none}
+.bname{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.55);flex:1;min-width:0}
+.bdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.bright{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.bamt{font-size:11px;font-weight:500;color:rgba(255,255,255,.85);min-width:40px;text-align:right}
+.qc{display:flex;align-items:center;gap:2px}
+.qcb{width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:inherit;line-height:1;transition:background .12s;flex-shrink:0}
+.qcb:hover{background:rgba(255,255,255,.18)}
+.qcn{font-size:10px;font-weight:600;color:#fff;min-width:12px;text-align:center}
+.sp-sub{padding:8px 14px;border-top:1px solid rgba(255,255,255,.07)}
+.srow{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.4);padding:2px 0}
+.srow span:last-child{color:rgba(255,255,255,.7);font-weight:500}
+.sp-total{padding:10px 14px 12px;border-top:1px solid rgba(255,255,255,.10);display:flex;flex-direction:column;gap:2px}
+.tlbl{font-size:11px;color:rgba(255,255,255,.4)}
+.tnum{font-size:26px;font-weight:700;letter-spacing:-.04em}
+.sp-foot{padding:0 14px 12px;display:flex;justify-content:space-between;align-items:center}
+.tnote{font-size:9px;color:rgba(255,255,255,.22)}
+.reset-lnk{font-size:10px;color:rgba(255,255,255,.28);background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:2px;padding:0;transition:color .15s}
+.reset-lnk:hover{color:rgba(255,255,255,.5)}
+
+/* modal */
+.modal-wrap{display:none;position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:50;align-items:center;justify-content:center;border-radius:16px}
+.modal-wrap.show{display:flex}
+.mbox{background:#1c1c1e;border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:26px 22px 20px;max-width:260px;width:100%;text-align:center}
+.micon{font-size:28px;margin-bottom:10px}
+.mtitle{font-size:15px;font-weight:700;margin-bottom:5px}
+.msub{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:18px;line-height:1.5}
+.mbtns{display:flex;gap:8px}
+.mcancel{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);font-size:12px;font-weight:500;color:rgba(255,255,255,.6);cursor:pointer;font-family:inherit;transition:background .12s}
+.mcancel:hover{background:rgba(255,255,255,.14)}
+.mconfirm{flex:1;padding:10px;border-radius:10px;border:none;background:#ff453a;font-size:12px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;transition:opacity .12s}
+.mconfirm:hover{opacity:.85}
+</style>
+
+<div class="root">
+  <div class="noise"></div>
+
+  <!-- SPLASH -->
+  <div class="splash z1" id="splash">
+    <div class="eyebrow">คำนวณก่อนจ่าย</div>
+    <div class="hero"><br>SushiCalculator</div>
+    <div class="hero-sub">เลือกจาน · ดูยอดรวม · รวม SC แล้ว</div>
+
+    <div class="cards">
+      <button class="scard scard-r" onclick="startCalc('sushiro')">
+        <div class="sbadge sbadge-r">Sushiro</div>
+        <div class="sdots">
+          <div class="sdot" style="background:#ddd"></div>
+          <div class="sdot" style="background:#a00"></div>
+          <div class="sdot" style="background:#999"></div>
+          <div class="sdot" style="background:#c8a600"></div>
+          <div class="sdot" style="background:#222"></div>
         </div>
-        <div class="splash-price-range">30 – 100 ฿ / จาน</div>
-        <div class="splash-sc-badge badge-sc">+ SC 10%</div>
+        <div class="sname">Sushiro</div>
+        <div class="sinfo">5 สี · 30–100 ฿<br>+ SC 10%</div>
+        <span class="sarrow">→</span>
       </button>
 
-      <!-- Katsu Midori -->
-      <button class="splash-card katsu-card" onclick="startCalc('katsu')">
-        <div class="splash-emoji">🟢</div>
-        <div class="splash-store-name">Katsu Midori</div>
-        <div class="splash-plates">
-          <div class="mini-plate" style="background:#e74c3c;"></div>
-          <div class="mini-plate" style="background:#2980b9;"></div>
-          <div class="mini-plate" style="background:#27ae60;"></div>
-          <div class="mini-plate" style="background:#f39c12;"></div>
-          <div class="mini-plate" style="background:#8B4513;"></div>
+      <button class="scard scard-g" onclick="startCalc('katsu')">
+        <div class="sbadge sbadge-g">Katsu Midori</div>
+        <div class="sdots">
+          <div class="sdot" style="background:#e74c3c"></div>
+          <div class="sdot" style="background:#2980b9"></div>
+          <div class="sdot" style="background:#27ae60"></div>
+          <div class="sdot" style="background:#f39c12"></div>
+          <div class="sdot" style="background:#8B4513"></div>
         </div>
-        <div class="splash-price-range">40 – 180 ฿ / จาน</div>
-        <div class="splash-sc-badge badge-sc-g">+ SC 10%</div>
+        <div class="sname">Katsu Midori</div>
+        <div class="sinfo">12 สี · 40–180 ฿<br>+ SC 10%</div>
+        <span class="sarrow">→</span>
       </button>
-
     </div>
   </div>
 
-  <!-- ── CALCULATOR ── -->
-  <div id="calculator">
-
+  <!-- CALCULATOR -->
+  <div class="calc z1" id="calc">
     <div class="calc-header">
-      <button class="back-btn" onclick="goBack()" title="เลือกร้านใหม่">
-        <i class="ti ti-arrow-left" aria-hidden="true"></i>
-      </button>
-      <span class="calc-store-name" id="calc-store-name"></span>
-      <span class="calc-sc-tag" id="calc-sc-tag"></span>
+      <button class="back" onclick="goBack()">←</button>
+      <span class="hname" id="hname"></span>
+      <span class="hpill" id="hpill">SC 10%</span>
     </div>
-
     <div class="calc-body">
-      <div class="calc-left">
-        <div class="section-label">เลือกจาน (กดเพิ่มทีละจาน)</div>
-        <div class="plates-grid" id="plates-grid"></div>
+      <div class="plates-wrap">
+        <div class="slabel">เลือกจาน</div>
+        <div class="pgrid" id="pgrid"></div>
       </div>
-
-      <div class="calc-right">
-        <div class="summary-box">
-          <div class="summary-head">
-            <i class="ti ti-receipt" aria-hidden="true" style="font-size:15px;"></i>
-            สรุปบิล
-          </div>
-          <div id="summary-content">
-            <div class="empty-state">ยังไม่ได้เลือกจาน<br>กดที่จานด้านบนเพื่อเพิ่ม</div>
+      <div class="spanel">
+        <div class="sp-head">สรุปบิล</div>
+        <div class="sp-body" id="sbody">
+          <div class="empty-s">
+            <div class="empty-icon">🍽</div>
+            <div class="empty-msg">ยังไม่มีจาน<br>แตะเพื่อเพิ่ม</div>
           </div>
         </div>
-
-        <button class="reset-btn" onclick="askReset()">
-          <i class="ti ti-refresh" aria-hidden="true" style="font-size:14px;"></i>
-          ล้างจานทั้งหมด
-        </button>
+        <div id="sfooter"></div>
       </div>
     </div>
-
   </div>
 
-  <!-- ── PRICE NOTICE (in calc screen) ── -->
-  <div class="price-notice" id="price-notice">
-    <i class="ti ti-info-circle" aria-hidden="true"></i>
-    ราคาอาจมีการเปลี่ยนแปลงตามร้านค้า
-  </div>
-
-  <!-- ── FOOTER ── -->
-  <footer class="site-footer" role="contentinfo" aria-label="Legal disclaimer">
-    <p class="footer-disclaimer">
-      ไม่มีส่วนเกี่ยวข้องกับ Sushiro หรือ Katsu Midori อย่างเป็นทางการ
-      <span class="footer-dot"></span>
-      ราคาอาจมีการเปลี่ยนแปลงได้
-      <span class="footer-dot"></span>
-      ผู้พัฒนาไม่รับผิดชอบต่อความเสียหายใดๆ<br>
-      © <span id="footer-year"></span> Sushi Calculator · Unofficial Fan Tool
-    </p>
-  </footer>
-
-</div>
-
-<!-- Confirm modal -->
-<div class="modal-overlay" id="confirm-modal">
-  <div class="modal-box">
-    <div class="modal-icon">🗑️</div>
-    <div class="modal-title">ล้างจานทั้งหมด?</div>
-    <div class="modal-sub">รายการที่เลือกไว้จะถูกลบออกหมด</div>
-    <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeModal()">ยกเลิก</button>
-      <button class="modal-confirm" onclick="confirmReset()">ล้างเลย</button>
+  <!-- MODAL -->
+  <div class="modal-wrap" id="overlay">
+    <div class="mbox">
+      <div class="micon">🗑</div>
+      <div class="mtitle">ล้างทั้งหมด?</div>
+      <div class="msub">รายการจะถูกลบออกทั้งหมด</div>
+      <div class="mbtns">
+        <button class="mcancel" onclick="closeModal()">ยกเลิก</button>
+        <button class="mconfirm" onclick="confirmReset()">ล้างเลย</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-  const STORES = {
-    sushiro: {
-      name: 'Sushiro',
-      sc: true,
-      color: '#c0392b',
-      plates: [
-        { price: 30,  outer: '#e8e8e8', inner: '#ffffff', innerBorder: '#ccc',    label: 'ขาว',  text: '#666' },
-        { price: 40,  outer: '#8B0000', inner: '#a00000', innerBorder: '#6b0000', label: 'แดง',  text: '#fff' },
-        { price: 60,  outer: '#909090', inner: '#b8b8b8', innerBorder: '#777',    label: 'เงิน', text: '#fff' },
-        { price: 80,  outer: '#9a7a00', inner: '#c8a600', innerBorder: '#856900', label: 'ทอง', text: '#fff' },
-        { price: 100, outer: '#111',    inner: '#222',    innerBorder: '#000',    label: 'ดำ',   text: '#fff' },
-      ]
-    },
-    katsu: {
-      name: 'Katsu Midori',
-      sc: true,
-      color: '#1e7d52',
-      plates: [
-        { price: 40,  outer: '#c0392b', inner: '#e74c3c', innerBorder: '#a93226', label: 'แดง',      text: '#fff' },
-        { price: 50,  outer: '#1a6a9a', inner: '#2980b9', innerBorder: '#1a5f8a', label: 'ฟ้า',      text: '#fff' },
-        { price: 60,  outer: '#1e8449', inner: '#27ae60', innerBorder: '#196f3d', label: 'เขียว',    text: '#fff' },
-        { price: 70,  outer: '#d68910', inner: '#f39c12', innerBorder: '#b7770d', label: 'เหลือง',   text: '#fff' },
-        { price: 80,  outer: '#6b3a10', inner: '#8B4513', innerBorder: '#5a2e0a', label: 'น้ำตาล',  text: '#fff' },
-        { price: 90,  outer: '#c07060', inner: '#e8a090', innerBorder: '#a05848', label: 'ชมพู',     text: '#fff' },
-        { price: 100, outer: '#8a7040', inner: '#b8a060', innerBorder: '#706030', label: 'เบจ',      text: '#fff' },
-        { price: 120, outer: '#9a8850', inner: '#c8b070', innerBorder: '#807040', label: 'ครีม',     text: '#fff' },
-        { price: 140, outer: '#7b241c', inner: '#922b21', innerBorder: '#641e16', label: 'เลือดหมู', text: '#fff' },
-        { price: 150, outer: '#8a6000', inner: '#c8900a', innerBorder: '#704f00', label: 'ทอง',      text: '#fff' },
-        { price: 160, outer: '#2c4f85', inner: '#4a6fa5', innerBorder: '#1e3a6e', label: 'กรมท่า',  text: '#fff' },
-        { price: 180, outer: '#0d2040', inner: '#1a3a5c', innerBorder: '#081530', label: 'กรมเข้ม', text: '#fff' },
-      ]
-    }
-  };
+const STORES={
+  sushiro:{name:'Sushiro',color:'#ff453a',bg:'rgba(255,69,58,.15)',border:'rgba(255,69,58,.35)',
+    plates:[
+      {price:30,out:'#c8c8c8',inn:'#eee',face:'rgba(0,0,0,.06)',lbl:'ขาว',tx:'#555'},
+      {price:40,out:'#8B0000',inn:'#b00',face:'rgba(0,0,0,.2)',lbl:'แดง',tx:'#fff'},
+      {price:60,out:'#888',inn:'#aaa',face:'rgba(0,0,0,.15)',lbl:'เงิน',tx:'#fff'},
+      {price:80,out:'#9a7a00',inn:'#c8a600',face:'rgba(0,0,0,.15)',lbl:'ทอง',tx:'#fff'},
+      {price:100,out:'#1a1a1a',inn:'#2a2a2a',face:'rgba(255,255,255,.07)',lbl:'ดำ',tx:'#bbb'}
+    ]},
+  katsu:{name:'Katsu Midori',color:'#30d158',bg:'rgba(48,209,88,.15)',border:'rgba(48,209,88,.35)',
+    plates:[
+      {price:40,out:'#c0392b',inn:'#e74c3c',face:'rgba(0,0,0,.15)',lbl:'แดง',tx:'#fff'},
+      {price:50,out:'#1a6a9a',inn:'#2980b9',face:'rgba(0,0,0,.15)',lbl:'ฟ้า',tx:'#fff'},
+      {price:60,out:'#1e8449',inn:'#27ae60',face:'rgba(0,0,0,.15)',lbl:'เขียว',tx:'#fff'},
+      {price:70,out:'#d68910',inn:'#f39c12',face:'rgba(0,0,0,.15)',lbl:'เหลือง',tx:'#fff'},
+      {price:80,out:'#6b3a10',inn:'#8B4513',face:'rgba(0,0,0,.15)',lbl:'น้ำตาล',tx:'#fff'},
+      {price:90,out:'#c07060',inn:'#e8a090',face:'rgba(0,0,0,.12)',lbl:'ชมพู',tx:'#fff'},
+      {price:100,out:'#8a7040',inn:'#b8a060',face:'rgba(0,0,0,.12)',lbl:'เบจ',tx:'#fff'},
+      {price:120,out:'#9a8850',inn:'#c8b070',face:'rgba(0,0,0,.12)',lbl:'ครีม',tx:'#fff'},
+      {price:140,out:'#7b241c',inn:'#922b21',face:'rgba(0,0,0,.15)',lbl:'เลือดหมู',tx:'#fff'},
+      {price:150,out:'#8a6000',inn:'#c8900a',face:'rgba(0,0,0,.15)',lbl:'ทอง',tx:'#fff'},
+      {price:160,out:'#2c4f85',inn:'#4a6fa5',face:'rgba(0,0,0,.15)',lbl:'กรมท่า',tx:'#fff'},
+      {price:180,out:'#0d2040',inn:'#1a3a5c',face:'rgba(0,0,0,.2)',lbl:'กรมเข้ม',tx:'#aac'}
+    ]}
+};
 
-  let currentStore = null;
-  let counts = {};
+let store=null,counts={};
 
-  function startCalc(store) {
-    currentStore = store;
-    counts = {};
+function startCalc(s){
+  store=s;counts={};
+  const d=STORES[s];
+  document.getElementById('hname').textContent=d.name;
+  const p=document.getElementById('hpill');
+  p.textContent='SC 10%';p.style.background=d.bg;p.style.color=d.color;p.style.border='1px solid '+d.border;p.style.borderRadius='20px';p.style.padding='4px 10px';p.style.fontSize='10px';p.style.fontWeight='700';p.style.letterSpacing='.06em';
+  document.getElementById('splash').style.display='none';
+  document.getElementById('calc').style.display='flex';
+  render();
+}
+function goBack(){
+  document.getElementById('calc').style.display='none';
+  document.getElementById('splash').style.display='flex';
+  store=null;counts={};
+}
+function addP(price){counts[price]=(counts[price]||0)+1;render();}
+function remP(price){if((counts[price]||0)>0)counts[price]--;if(counts[price]===0)delete counts[price];render();}
 
-    const s = STORES[store];
-    document.getElementById('calc-store-name').textContent = s.name;
-
-    const tag = document.getElementById('calc-sc-tag');
-    tag.textContent = 'SC 10%';
-    tag.style.background = store === 'sushiro' ? 'rgba(192,57,43,0.10)' : 'rgba(30,125,82,0.10)';
-    tag.style.color = s.color;
-
-    document.getElementById('splash').style.display = 'none';
-    document.getElementById('calculator').style.display = 'block';
-
-    renderPlates();
-    renderSummary();
-  }
-
-  function goBack() {
-    document.getElementById('calculator').style.display = 'none';
-    document.getElementById('splash').style.display = 'flex';
-    counts = {};
-    currentStore = null;
-  }
-
-  function renderPlates() {
-    const grid = document.getElementById('plates-grid');
-    const plates = STORES[currentStore].plates;
-    grid.innerHTML = plates.map(p => {
-      const count = counts[p.price] || 0;
-      const selStyle = count > 0 ? `border-color:${p.outer};border-width:2px;` : '';
-      return `
-        <div class="plate-card${count > 0 ? ' selected' : ''}" style="${selStyle}" onclick="addPlate(${p.price})" title="${p.price} บาท">
-          ${count > 0 ? `<div class="plate-badge" style="background:${p.outer}">${count}</div>` : ''}
-          <div class="plate-circle" style="background:${p.outer};">
-            <div class="plate-inner" style="background:${p.inner};border:1.5px solid ${p.innerBorder};">
-              <span style="color:${p.text};">${p.label}</span>
-            </div>
-          </div>
-          <div class="plate-price">${p.price} ฿</div>
-        </div>`;
-    }).join('');
-  }
-
-  function addPlate(price) {
-    counts[price] = (counts[price] || 0) + 1;
-    renderPlates();
-    renderSummary();
-  }
-
-  function removePlate(price) {
-    if ((counts[price] || 0) > 0) {
-      counts[price]--;
-      if (counts[price] === 0) delete counts[price];
-    }
-    renderPlates();
-    renderSummary();
-  }
-
-  function renderSummary() {
-    const box = document.getElementById('summary-content');
-    const plates = STORES[currentStore].plates;
-    const accentColor = STORES[currentStore].color;
-
-    const selected = plates.filter(p => (counts[p.price] || 0) > 0);
-    if (selected.length === 0) {
-      box.innerHTML = '<div class="empty-state">ยังไม่ได้เลือกจาน<br>กดที่จานด้านบนเพื่อเพิ่ม</div>';
-      return;
-    }
-
-    let subtotal = 0;
-    const rows = selected.map(p => {
-      const qty = counts[p.price];
-      const line = p.price * qty;
-      subtotal += line;
-      return `
-        <div class="summary-row">
-          <span>
-            <span class="plate-dot" style="background:${p.outer};border:1px solid ${p.innerBorder};"></span>
-            จาน ${p.price} ฿
-          </span>
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span class="val">${line.toLocaleString()} ฿</span>
-            <div class="qty-ctrl">
-              <button class="qc-btn" onclick="removePlate(${p.price})" title="ลด 1 จาน">−</button>
-              <span class="qc-num">${qty}</span>
-              <button class="qc-btn" onclick="addPlate(${p.price})" title="เพิ่ม 1 จาน">+</button>
-            </div>
-          </div>
-        </div>`;
-    }).join('');
-
-    const sc    = Math.round(subtotal * 0.10);
-    const total = subtotal + sc;
-
-    box.innerHTML = `
-      <div class="summary-rows">${rows}</div>
-      <hr class="divider">
-      <div class="summary-row" style="margin-bottom:5px;">
-        <span>ยอดก่อน SC</span>
-        <span class="val">${subtotal.toLocaleString()} ฿</span>
+function render(){
+  const d=STORES[store];
+  // plates
+  const grid=document.getElementById('pgrid');
+  grid.innerHTML=d.plates.map(p=>{
+    const q=counts[p.price]||0,on=q>0;
+    const bs=on?`border-color:${p.out};border-width:1.5px;box-shadow:0 0 0 1px ${p.out}22;`:'';
+    return`<button class="pbtn${on?' on':''}" style="${bs}" onclick="addP(${p.price})">
+      ${on?`<div class="pbadge" style="background:${p.out}">${q}</div>`:''}
+      <div class="pring" style="background:${p.out}">
+        <div class="pface" style="background:${p.inn}"><span style="color:${p.tx}">${p.lbl}</span></div>
       </div>
-      <div class="summary-row">
-        <span>Service Charge 10%</span>
-        <span class="val">+ ${sc.toLocaleString()} ฿</span>
+      <div class="plbl" style="${on?'color:'+p.out:''}">${p.price}฿</div>
+    </button>`;
+  }).join('');
+
+  // summary
+  const sel=d.plates.filter(p=>(counts[p.price]||0)>0);
+  const body=document.getElementById('sbody');
+  const foot=document.getElementById('sfooter');
+  if(!sel.length){
+    body.innerHTML=`<div class="empty-s"><div class="empty-icon">🍽</div><div class="empty-msg">ยังไม่มีจาน<br>แตะเพื่อเพิ่ม</div></div>`;
+    foot.innerHTML='';return;
+  }
+  let sub=0;
+  body.innerHTML=sel.map(p=>{
+    const q=counts[p.price],line=p.price*q;sub+=line;
+    return`<div class="brow">
+      <div class="bname"><div class="bdot" style="background:${p.out}"></div>${p.price}฿</div>
+      <div class="bright">
+        <div class="bamt">${line.toLocaleString()}฿</div>
+        <div class="qc">
+          <button class="qcb" onclick="remP(${p.price})">−</button>
+          <span class="qcn">${q}</span>
+          <button class="qcb" onclick="addP(${p.price})">+</button>
+        </div>
       </div>
-      <hr class="divider">
-      <div class="total-row">
-        <span class="total-label">รวมทั้งหมด</span>
-        <span class="total-amount" style="color:${accentColor}">${total.toLocaleString()} ฿</span>
-      </div>
-      <div class="sc-note">* รวม Service Charge 10% แล้ว</div>
-    `;
-  }
+    </div>`;
+  }).join('');
+  const sc=Math.round(sub*.1),total=sub+sc;
+  foot.innerHTML=`
+    <div class="sp-sub">
+      <div class="srow"><span>ก่อน SC</span><span>${sub.toLocaleString()}฿</span></div>
+      <div class="srow"><span>SC 10%</span><span>+${sc.toLocaleString()}฿</span></div>
+    </div>
+    <div class="sp-total">
+      <div class="tlbl">รวมทั้งหมด</div>
+      <div class="tnum" style="color:${d.color}">${total.toLocaleString()}฿</div>
+    </div>
+    <div class="sp-foot">
+      <span class="tnote">* รวม SC 10%</span>
+      <button class="reset-lnk" onclick="askReset()">ล้างทั้งหมด</button>
+    </div>`;
+}
 
-  function askReset() {
-    const hasItems = Object.values(counts).some(v => v > 0);
-    if (!hasItems) return;
-    document.getElementById('confirm-modal').classList.add('show');
-  }
-
-  function closeModal() {
-    document.getElementById('confirm-modal').classList.remove('show');
-  }
-
-  function confirmReset() {
-    closeModal();
-    counts = {};
-    renderPlates();
-    renderSummary();
-  }
-
-  document.getElementById('confirm-modal').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
-  });
-
-
+function askReset(){if(Object.values(counts).some(v=>v>0))document.getElementById('overlay').classList.add('show');}
+function closeModal(){document.getElementById('overlay').classList.remove('show');}
+function confirmReset(){closeModal();counts={};render();}
+document.getElementById('overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
 </script>
-</body>
-</html>
